@@ -253,6 +253,11 @@ export default function CreatePage() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        audioContext.close().catch(() => {});
+        for (const audio of audioElements) {
+          audio.pause();
+          audio.src = "";
+        }
         setIsGenerating(false);
       };
 

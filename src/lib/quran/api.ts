@@ -19,18 +19,18 @@ export const RECITERS: Reciter[] = [
     subfolder: "ar.abdurrahmaansudais",
   },
   {
-    id: "ar.maaboralmueaqly",
+    id: "ar.mahermuaiqly",
     name: "Maher Al-Muaiqly",
     nameAr: "ماهر المعيقلي",
     style: "Murattal",
-    subfolder: "ar.maaboralmueaqly",
+    subfolder: "ar.mahermuaiqly",
   },
   {
-    id: "ar.husaborymajeed",
+    id: "ar.hanirifai",
     name: "Hani Ar-Rifai",
     nameAr: "هاني الرفاعي",
     style: "Murattal",
-    subfolder: "ar.husaborymajeed",
+    subfolder: "ar.hanirifai",
   },
   {
     id: "ar.abdulbasitmurattal",
@@ -40,11 +40,11 @@ export const RECITERS: Reciter[] = [
     subfolder: "ar.abdulbasitmurattal",
   },
   {
-    id: "ar.saaboralmehdar",
+    id: "ar.saoodshuraym",
     name: "Saud Ash-Shuraim",
     nameAr: "سعود الشريم",
     style: "Murattal",
-    subfolder: "ar.saaboralmehdar",
+    subfolder: "ar.saoodshuraym",
   },
 ];
 
