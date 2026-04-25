@@ -79,6 +79,8 @@ export const BACKGROUNDS = [
     name: "داكن أنيق",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #0c0c1d 0%, #1a1a3e 50%, #0c0c1d 100%)",
+    edgeColor: "#0c0c1d",
+    middleColor: "#1a1a3e",
     thumbnail: "#0c0c1d",
   },
   {
@@ -86,6 +88,8 @@ export const BACKGROUNDS = [
     name: "أخضر إسلامي",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #0d3320 0%, #1a5c3a 50%, #0d3320 100%)",
+    edgeColor: "#0d3320",
+    middleColor: "#1a5c3a",
     thumbnail: "#0d3320",
   },
   {
@@ -93,6 +97,8 @@ export const BACKGROUNDS = [
     name: "ذهبي فاخر",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #1a1000 0%, #3d2b00 50%, #1a1000 100%)",
+    edgeColor: "#1a1000",
+    middleColor: "#3d2b00",
     thumbnail: "#3d2b00",
   },
   {
@@ -100,6 +106,8 @@ export const BACKGROUNDS = [
     name: "أزرق سماوي",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #0a1628 100%)",
+    edgeColor: "#0a1628",
+    middleColor: "#1a3a5c",
     thumbnail: "#0a1628",
   },
   {
@@ -107,6 +115,8 @@ export const BACKGROUNDS = [
     name: "بنفسجي روحاني",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #1a0a2e 0%, #3d1a6e 50%, #1a0a2e 100%)",
+    edgeColor: "#1a0a2e",
+    middleColor: "#3d1a6e",
     thumbnail: "#1a0a2e",
   },
   {
@@ -114,6 +124,8 @@ export const BACKGROUNDS = [
     name: "دافئ هادئ",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #1a0f0a 0%, #3d2a1a 50%, #1a0f0a 100%)",
+    edgeColor: "#1a0f0a",
+    middleColor: "#3d2a1a",
     thumbnail: "#3d2a1a",
   },
   {
@@ -121,6 +133,8 @@ export const BACKGROUNDS = [
     name: "فيروزي",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #0a1a1a 0%, #1a4a4a 50%, #0a1a1a 100%)",
+    edgeColor: "#0a1a1a",
+    middleColor: "#1a4a4a",
     thumbnail: "#1a4a4a",
   },
   {
@@ -128,6 +142,8 @@ export const BACKGROUNDS = [
     name: "أسود كلاسيكي",
     type: "gradient" as const,
     value: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)",
-    thumbnail: "#0a0a0a",
+    edgeColor: "#000000",
+    middleColor: "#1a1a1a",
+    thumbnail: "#000000",
   },
 ];

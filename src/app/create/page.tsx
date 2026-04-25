@@ -81,12 +81,12 @@ export default function CreatePage() {
       const bg = background;
       if (bg.type === "gradient") {
         const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, "#0c0c1d");
-        gradient.addColorStop(0.5, bg.thumbnail);
-        gradient.addColorStop(1, "#0c0c1d");
+        gradient.addColorStop(0, bg.edgeColor);
+        gradient.addColorStop(0.5, bg.middleColor);
+        gradient.addColorStop(1, bg.edgeColor);
         ctx.fillStyle = gradient;
       } else {
-        ctx.fillStyle = "#0c0c1d";
+        ctx.fillStyle = bg.edgeColor;
       }
       ctx.fillRect(0, 0, width, height);
 
@@ -294,13 +294,19 @@ export default function CreatePage() {
         };
 
         audio.onended = onEnded;
+        let fallbackScheduled = false;
+        const scheduleFallback = () => {
+          if (!fallbackScheduled) {
+            fallbackScheduled = true;
+            setTimeout(onEnded, ayahDuration);
+          }
+        };
         audio.onerror = () => {
-          // If audio fails, use fallback duration
-          setTimeout(onEnded, ayahDuration);
+          scheduleFallback();
         };
 
         audio.play().catch(() => {
-          setTimeout(onEnded, ayahDuration);
+          scheduleFallback();
         });
       };
 
