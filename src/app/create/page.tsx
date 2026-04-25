@@ -198,7 +198,10 @@ export default function CreatePage() {
       canvas.width = platform.width;
       canvas.height = platform.height;
       const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      if (!ctx) {
+        setIsGenerating(false);
+        return;
+      }
 
       const stream = canvas.captureStream(30);
 

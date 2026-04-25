@@ -126,14 +126,12 @@ export async function fetchAyahs(
   for (let i = ayahStart - 1; i < ayahEnd && i < arabicAyahs.length; i++) {
     const ayahNum = arabicAyahs[i].numberInSurah;
     const globalNumber = arabicAyahs[i].number;
-    const paddedSurah = String(surahNumber).padStart(3, "0");
-    const paddedAyah = String(ayahNum).padStart(3, "0");
 
     ayahs.push({
       number: ayahNum,
       text: arabicAyahs[i].text,
       translation: translationAyahs[i]?.text || "",
-      audioUrl: `${AUDIO_BASE}/${reciterId}/${paddedSurah}${paddedAyah}.mp3`,
+      audioUrl: `${AUDIO_BASE}/${reciterId}/${globalNumber}.mp3`,
     });
   }
 
