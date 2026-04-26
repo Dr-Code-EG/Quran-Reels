@@ -205,26 +205,19 @@ export default function CreatePage() {
 
       const stream = canvas.captureStream(30);
 
-      // Load and play all audio
-      const audioElements: HTMLAudioElement[] = [];
-      for (const ayah of ayahs) {
-        const audio = new Audio();
-        audio.crossOrigin = "anonymous";
-        audio.src = ayah.audioUrl;
-        audioElements.push(audio);
-      }
-
-      // Create audio context to mix into stream
       const audioContext = new AudioContext();
       const dest = audioContext.createMediaStreamDestination();
 
-      for (const audio of audioElements) {
+      // Pre-fetch all audio as ArrayBuffers for reliable CORS-safe capture
+      const audioBuffers: AudioBuffer[] = [];
+      for (const ayah of ayahs) {
         try {
-          const source = audioContext.createMediaElementSource(audio);
-          source.connect(dest);
-          source.connect(audioContext.destination);
+          const response = await fetch(ayah.audioUrl);
+          const arrayBuffer = await response.arrayBuffer();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          audioBuffers.push(audioBuffer);
         } catch {
-          // CORS may block audio capture
+          audioBuffers.push(audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate));
         }
       }
 
@@ -254,65 +247,63 @@ export default function CreatePage() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         audioContext.close().catch(() => {});
-        for (const audio of audioElements) {
-          audio.pause();
-          audio.src = "";
-        }
         setIsGenerating(false);
       };
 
       mediaRecorder.start();
 
-      // Animate through ayahs
+      // Animate through ayahs with decoded audio buffers
       let currentIdx = 0;
-      const ayahDuration = 5000; // 5 seconds per ayah fallback
+      const fallbackDuration = 3;
 
       const playNextAyah = () => {
         if (currentIdx >= ayahs.length) {
-          // Final frame hold
           setTimeout(() => mediaRecorder.stop(), 1000);
           return;
         }
 
         setCurrentAyahIndex(currentIdx);
-        const audio = audioElements[currentIdx];
+        const buffer = audioBuffers[currentIdx];
+        const duration = buffer.duration > 1 ? buffer.duration : fallbackDuration;
+
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(dest);
+        source.connect(audioContext.destination);
+        source.start();
 
         let animationFrame: number;
         const startTime = Date.now();
 
         const animate = () => {
           const elapsed = Date.now() - startTime;
-          const duration = (audio.duration || ayahDuration / 1000) * 1000;
-          const progress = Math.min(1, elapsed / 500); // fade in over 500ms
+          const progress = Math.min(1, elapsed / 500);
           drawVideoFrame(ctx, canvas.width, canvas.height, currentIdx, progress);
-          if (elapsed < duration) {
+          if (elapsed < duration * 1000) {
             animationFrame = requestAnimationFrame(animate);
           }
         };
 
         animate();
 
-        const onEnded = () => {
+        let advanced = false;
+        const advance = () => {
+          if (advanced) return;
+          advanced = true;
           cancelAnimationFrame(animationFrame);
           currentIdx++;
           playNextAyah();
         };
 
-        audio.onended = onEnded;
-        let fallbackScheduled = false;
-        const scheduleFallback = () => {
-          if (!fallbackScheduled) {
-            fallbackScheduled = true;
-            setTimeout(onEnded, ayahDuration);
-          }
-        };
-        audio.onerror = () => {
-          scheduleFallback();
-        };
+        source.onended = advance;
 
-        audio.play().catch(() => {
-          scheduleFallback();
-        });
+        // Fallback in case onended doesn't fire
+        setTimeout(() => {
+          if (!advanced) {
+            try { source.stop(); } catch { /* already stopped */ }
+            advance();
+          }
+        }, (duration + 1) * 1000);
       };
 
       playNextAyah();

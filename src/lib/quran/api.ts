@@ -1,7 +1,7 @@
 import { Surah, Ayah, Reciter } from "./types";
 
 const QURAN_API = "https://api.alquran.cloud/v1";
-const AUDIO_BASE = "https://cdn.islamic.network/quran/audio/128";
+const AUDIO_BASE = "https://verses.quran.com";
 
 export const RECITERS: Reciter[] = [
   {
@@ -9,42 +9,42 @@ export const RECITERS: Reciter[] = [
     name: "Mishary Rashid Al-Afasy",
     nameAr: "مشاري راشد العفاسي",
     style: "Murattal",
-    subfolder: "ar.alafasy",
+    subfolder: "Alafasy",
   },
   {
     id: "ar.abdurrahmaansudais",
     name: "Abdurrahmaan As-Sudais",
     nameAr: "عبدالرحمن السديس",
     style: "Murattal",
-    subfolder: "ar.abdurrahmaansudais",
+    subfolder: "Sudais",
   },
   {
     id: "ar.mahermuaiqly",
     name: "Maher Al-Muaiqly",
     nameAr: "ماهر المعيقلي",
     style: "Murattal",
-    subfolder: "ar.mahermuaiqly",
+    subfolder: "Maher_Muaiqly",
   },
   {
     id: "ar.hanirifai",
     name: "Hani Ar-Rifai",
     nameAr: "هاني الرفاعي",
     style: "Murattal",
-    subfolder: "ar.hanirifai",
+    subfolder: "Rifai",
   },
   {
     id: "ar.abdulbasitmurattal",
     name: "Abdul Basit (Murattal)",
     nameAr: "عبدالباسط عبدالصمد",
     style: "Murattal",
-    subfolder: "ar.abdulbasitmurattal",
+    subfolder: "AbdulBaset/Murattal",
   },
   {
     id: "ar.saoodshuraym",
     name: "Saud Ash-Shuraim",
     nameAr: "سعود الشريم",
     style: "Murattal",
-    subfolder: "ar.saoodshuraym",
+    subfolder: "Shuraym",
   },
 ];
 
@@ -125,13 +125,16 @@ export async function fetchAyahs(
 
   for (let i = ayahStart - 1; i < ayahEnd && i < arabicAyahs.length; i++) {
     const ayahNum = arabicAyahs[i].numberInSurah;
-    const globalNumber = arabicAyahs[i].number;
+    const reciter = RECITERS.find((r) => r.id === reciterId);
+    const folder = reciter?.subfolder || "Alafasy";
+    const paddedSurah = String(surahNumber).padStart(3, "0");
+    const paddedAyah = String(ayahNum).padStart(3, "0");
 
     ayahs.push({
       number: ayahNum,
       text: arabicAyahs[i].text,
       translation: translationAyahs[i]?.text || "",
-      audioUrl: `${AUDIO_BASE}/${reciterId}/${globalNumber}.mp3`,
+      audioUrl: `${AUDIO_BASE}/${folder}/mp3/${paddedSurah}${paddedAyah}.mp3`,
     });
   }
 
