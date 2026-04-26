@@ -121,11 +121,13 @@ export default function CreatePage() {
       ctx.lineTo(width * 0.8, height * 0.22);
       ctx.stroke();
 
-      // Bismillah
-      ctx.fillStyle = "rgba(212, 175, 55, 0.4)";
-      ctx.font = `${Math.floor(width * 0.028)}px "Noto Naskh Arabic", serif`;
-      ctx.textAlign = "center";
-      ctx.fillText("بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", width / 2, height * 0.18);
+      // Bismillah (not shown for Surah At-Tawba)
+      if (surahNumber !== 9) {
+        ctx.fillStyle = "rgba(212, 175, 55, 0.4)";
+        ctx.font = `${Math.floor(width * 0.028)}px "Noto Naskh Arabic", serif`;
+        ctx.textAlign = "center";
+        ctx.fillText("بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", width / 2, height * 0.18);
+      }
 
       // Main Ayah text
       if (ayahs[ayahIndex]) {
@@ -193,6 +195,7 @@ export default function CreatePage() {
     if (ayahs.length === 0) return;
     setIsGenerating(true);
 
+    let audioContext: AudioContext | null = null;
     try {
       const canvas = document.createElement("canvas");
       canvas.width = platform.width;
@@ -205,8 +208,9 @@ export default function CreatePage() {
 
       const stream = canvas.captureStream(30);
 
-      const audioContext = new AudioContext();
-      const dest = audioContext.createMediaStreamDestination();
+      audioContext = new AudioContext();
+      const ac = audioContext;
+      const dest = ac.createMediaStreamDestination();
 
       // Pre-fetch all audio as ArrayBuffers for reliable CORS-safe capture
       const audioBuffers: AudioBuffer[] = [];
@@ -214,10 +218,10 @@ export default function CreatePage() {
         try {
           const response = await fetch(ayah.audioUrl);
           const arrayBuffer = await response.arrayBuffer();
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          const audioBuffer = await ac.decodeAudioData(arrayBuffer);
           audioBuffers.push(audioBuffer);
         } catch {
-          audioBuffers.push(audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate));
+          audioBuffers.push(ac.createBuffer(1, ac.sampleRate, ac.sampleRate));
         }
       }
 
@@ -246,7 +250,7 @@ export default function CreatePage() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        audioContext.close().catch(() => {});
+        ac.close().catch(() => {});
         setIsGenerating(false);
       };
 
@@ -266,10 +270,10 @@ export default function CreatePage() {
         const buffer = audioBuffers[currentIdx];
         const duration = buffer.duration > 1 ? buffer.duration : fallbackDuration;
 
-        const source = audioContext.createBufferSource();
+        const source = ac.createBufferSource();
         source.buffer = buffer;
         source.connect(dest);
-        source.connect(audioContext.destination);
+        source.connect(ac.destination);
         source.start();
 
         let animationFrame: number;
@@ -308,6 +312,7 @@ export default function CreatePage() {
 
       playNextAyah();
     } catch {
+      audioContext?.close().catch(() => {});
       alert("حدث خطأ في إنتاج الفيديو. يرجى المحاولة مرة أخرى.");
       setIsGenerating(false);
     }
